@@ -7,14 +7,15 @@ from queue import Queue
 from sights import get_sights
 
 NB_THREADS = 4
-NB_FRAMES = 150
-
+NB_FRAMES = 200
+NAME_PLACE = 'saintgall'
+N_SIGHTS = 4
 
 # from sights import get_sights
 
 def worker():
-    driver = webdriver.Chrome('/Users/valentin/Documents/Hackathons/StartHack/chromedriver')
-    #driver = webdriver.Chrome()
+    # driver = webdriver.Chrome('/Users/valentin/Documents/Hackathons/StartHack/chromedriver')
+    driver = webdriver.Chrome()
 
     while not q.empty():
         item = q.get()
@@ -29,8 +30,7 @@ def worker():
             q.put(item)
 
 if __name__ == '__main__':
-    name_place = 'London'
-    sights = get_sights(name_place)[:3]
+    sights = get_sights(NAME_PLACE)[:N_SIGHTS]
 
     # looping back to the first sight
     sights.append(sights[0])
@@ -106,7 +106,7 @@ if __name__ == '__main__':
 
     driver.quit()
     '''
-    images_to_video('out/sof_\%5d', '.png', 'videos/' + name_place + '.mp4')
+    images_to_video('out/sof_\%5d', '.png', 'videos/' + NAME_PLACE + '.mp4')
 
     stop = timeit.default_timer()
 

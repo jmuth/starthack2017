@@ -9,11 +9,11 @@ def get_sights(name='Fribourg'):
     # enter website
     driver.get("http://www.sightsmap.com/")
     # search the site
-    time.sleep(2)
+    time.sleep(3)
     elem = driver.find_element_by_id("searchfield")
     elem.send_keys(name)
     elem.send_keys(Keys.RETURN)
-    time.sleep(3)
+    time.sleep(4)
 
     # # Wait for the element
     # num = WebDriverWait(driver, 10).until(
@@ -28,10 +28,14 @@ def get_sights(name='Fribourg'):
             #  get the displayed markers
             ++i
             num = (driver.execute_script("return mapMarkersArray.length"))
-            success = True
+            if num != 0:
+                success = True
+            else:
+                print("[WAIT] sightsmap not ready yet")
+                time.sleep(2)
         except Exception as err:
             if i <= max_try:
-                print("[ERROR] sightmaps timed out, try again (iteration:,", i, ")")
+                print("[ERROR] sightsmap timed out, try again (iteration:,", i, ")")
                 time.sleep(3)
             else:
                 quit()
