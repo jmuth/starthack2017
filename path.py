@@ -15,6 +15,7 @@ def meter_to_coordinate(m_x, m_y, lat):
     coord_y = m_y / (6378137.0 * cos(lat / 360.0 * 2 * pi))
     return (coord_x, coord_y)
 
+
 # Return string for google maps address
 # Takes x and y coordinates, rayon of the rotation, tilt and revolution (between 0 and 1)
 def compute_camera_values(origin_x, origin_y, rayon_meter, tilt, rev):
@@ -126,7 +127,7 @@ def spline_interpolation(path, nb_frame):
 # Get a list of destination (in the right order)
 # Will do a half-rotation around each destination
 # Need to first compute entry degree
-def plan_trip(list_places, radius = 800, time_per_destination = 2.0):
+def plan_trip(list_places, radius = 800, tilt = 55, time_per_destination = 2.0):
 
     path = [[],[],[],[],[],[]]
 
@@ -155,7 +156,7 @@ def plan_trip(list_places, radius = 800, time_per_destination = 2.0):
         if x == 0:
             current_h = ( h + 180 ) % 360
 
-        add_rotation(path, list_places[x], radius, 40, 5, time_in, time_out, current_h, (h - current_h) % 360 )
+        add_rotation(path, list_places[x], radius, tilt, 5, time_in, time_out, current_h, (h - current_h) % 360 )
 
         time_travel = distance / 0.02 * time_per_destination
 
@@ -165,7 +166,7 @@ def plan_trip(list_places, radius = 800, time_per_destination = 2.0):
 
     time_in = time
     time_out = time + time_per_destination
-    add_rotation(path, list_places[-1], radius, 40, 5, time_in, time_out, current_h, 180 )
+    add_rotation(path, list_places[-1], radius, tilt, 5, time_in, time_out, current_h, 180 )
 
     # add points in between destinations at higher altitude
 
