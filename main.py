@@ -7,8 +7,8 @@ from queue import Queue
 from sights import get_sights
 
 NB_THREADS = 4
-NB_FRAMES = 200
-NAME_PLACE = 'saintgall'
+NB_FRAMES = 600
+# NAME_PLACE = 'saintgall'
 N_SIGHTS = 4
 
 
@@ -31,14 +31,13 @@ def worker():
             q.put(item)
 
 if __name__ == '__main__':
-    sights = get_sights(NAME_PLACE)[:N_SIGHTS]
+    # sights = get_sights(NAME_PLACE)[:N_SIGHTS]
 
     # looping back to the first sight
-    sights.append(sights[0])
+    # sights.append(sights[0])
 
     start = timeit.default_timer()
 
-    '''
     p_eiffel = (48.8584, 2.2945, 60)
     p_triomphe = (48.8738, 2.2950, 60)
     p_chaillot = (48.8620159, 2.2878386, 80)
@@ -46,11 +45,7 @@ if __name__ == '__main__':
     p_louvre = (48.8612266, 2.3357741, 80)
     p_monmartre = (48.8866677, 2.3430436, 120)
 
-    path = [[], [], [], [], [], []]
-
-    path = plan_trip(sights, 900)
-
-    '''
+    paris = [p_eiffel, p_triomphe, p_chaillot, p_grand_palais, p_louvre, p_monmartre, p_eiffel]
 
     # # fribourg
     # p_poya = (46.8133523,7.1645176, 60)
@@ -60,7 +55,7 @@ if __name__ == '__main__':
 
 
     path = [[],[],[],[],[],[]]
-    path = plan_trip(sights, 500)
+    path = plan_trip(paris, 900, 45)
 
     # ensure that h are in monotically decreasing
     for x in range(1, len(path[4])):
