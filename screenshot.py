@@ -1,6 +1,6 @@
 from subprocess import Popen, PIPE
 from selenium import webdriver
-from path import compute_camera_values
+import selenium.webdriver.support.ui as ui
 
 import os, base64, time
 
@@ -16,7 +16,8 @@ def execute_command(command):
 
 def do_screen_capturing(url, screen_path, width, height):
     print("Capturing screen..")
-    driver = webdriver.Chrome()
+    driver = webdriver.Chrome("/Users/valentin/Documents/Hackathons/StartHack/chromedriver")
+
     # it save service log file in same directory
     # if you want to have log file stored else where
     # initialize the webdriver.PhantomJS() as
@@ -29,11 +30,27 @@ def do_screen_capturing(url, screen_path, width, height):
     driver.get(url)
     time.sleep(6)
 
+    wait = ui.WebDriverWait(driver, 10)
+
     # disable label
+
+    wait.until(lambda driver : driver.find_element_by_xpath("//*[contains(@class,'searchbox-hamburger')]"))
+
     driver.find_element_by_class_name('searchbox-hamburger').click()
+
+    wait.until(lambda driver : driver.find_element_by_xpath("//*[contains(@class,'widget-settings-sub-button-label')]"))
+
+    '''
+    # Element invisible during a few ms
     time.sleep(0.5)
+
     driver.find_element_by_class_name('widget-settings-sub-button-label').click()
-    time.sleep(1.)
+    '''
+
+    disable_label_button = driver.find_element_by_class_name('widget-settings-sub-button-label')
+    driver.execute_script('arguments[0].click()', disable_label_button)
+
+    time.sleep(1)
 
     driver.save_screenshot(screen_path)
     driver.quit()
@@ -79,12 +96,10 @@ def get_screen_shot(**kwargs):
 
     return screen_path, crop_path
 
-def screenshot_360(N, origin_x, origin_y, rayon_meter, tilt):
-    for i in range (int(N)):
-        url = "https://www.google.ch/maps/" + compute_camera_values(origin_x, origin_y, rayon_meter, tilt, i / N)
-        screen_path, crop_path = get_screen_shot(
-            url=url, path='out/', filename='sof_%d.png' % (i+1),
-            crop=True, crop_replace=True,
-            crop_width=1600, crop_height=900,
-            crop_offset_width=200, crop_offset_height=200
-        )
+def screenshot_url(url, nb):
+    screen_path, crop_path = get_screen_shot(
+        url=url, path='out/', filename='sof_%s.png' % str(nb).zfill(5),
+        crop=True, crop_replace=True,
+        crop_width=1600, crop_height=900,
+        crop_offset_width=200, crop_offset_height=200
+    )

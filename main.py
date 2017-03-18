@@ -1,4 +1,6 @@
 from path import *
+from screenshot import *
+from video import *
 
 if __name__ == '__main__':
 
@@ -21,18 +23,14 @@ if __name__ == '__main__':
 	#add_traveling(path, p_eiffel, p_triomphe, 5, 2.0 ,3.0)
 	add_rotation(path, p_triomphe, 800, 40, 5, 5.0, 10.0)
 
-	for i in range(len(path[0])):
-		print("https://www.google.ch/maps/" + point_to_string(path_at(path, i)) + "t/data=!3m1!1e3")
-
 	interpolated_path = spline_interpolation(path, 25)
 
 	print("+++++++ Interpolated path +++++++")
 
 	for i in range(len(interpolated_path[0])):
-		print("https://www.google.ch/maps/" + point_to_string(path_at(interpolated_path, i)) + "t/data=!3m1!1e3")
+		screenshot_url("https://www.google.ch/maps/" + point_to_string(path_at(interpolated_path, i)) + "t/data=!3m1!1e3", i+1)
 
-
-	
+	images_to_video('out/', '.png', 'path.mp4')
 
 	'''
 	import matplotlib.pyplot as plt
