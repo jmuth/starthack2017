@@ -39,18 +39,17 @@ import scipy as sp
 
 
 # Add full rotation around center
-def add_rotation(path, center_point, radius, tilt, N, time_beg, time_end):
+def add_rotation(path, center_point, radius, tilt, N, time_beg, time_end, rot_beg = 0, rot_width = 360):
 	rad_tilt = tilt / 360.0 * 2.0 * pi
 	sin_radius = radius * sin(rad_tilt)
 
 	for i in range(int(N)):
-		rev = 2.0 * pi * float(i) / N
+		rev = 2.0 * pi * (rot_beg + (rot_width) * float(i) / (N-1)) / 360
 		(x_offset, y_offset) = meter_to_coordinate(sin_radius * sin(rev), sin_radius * cos(rev), center_point[0])
 		x = center_point[0] + x_offset * 180 / pi
 		y = center_point[1] + y_offset * 180 / pi
 		altitude = center_point[2] + radius * cos(rad_tilt)
-		#h = (360.0 - 90.0 - 360.0 * float(i) / N) % 360.0
-		h = (360.0 - 90.0 - 360.0 * float(i) / N)
+		h = (360.0 - 90.0 - (rot_beg + (rot_width) * float(i) / (N-1)))
 
 		time = time_beg + (time_end - time_beg) * float(i) / N
 
@@ -62,7 +61,7 @@ def add_rotation(path, center_point, radius, tilt, N, time_beg, time_end):
 		path[5].append(time)
 
 # This doesn't add the first and the last one
-def add_traveling(path, p_a, p_b, N, time_beg, time_end):
+def add_traveling(path, p_a, p_b, N, time_beg, time_end, altitude_offset = 0):
 	d_x = p_b[0] - p_a[0] 
 	d_y = p_b[1] - p_a[1]
 	d_a = p_b[2] - p_a[2]
@@ -74,7 +73,7 @@ def add_traveling(path, p_a, p_b, N, time_beg, time_end):
 	for i in range(1, int(N)):
 		x = p_a[0] + d_x * float(i) / (N+1)
 		y = p_a[1] + d_y * float(i) / (N+1)
-		altitude = p_a[2] + d_a * float(i) / (N+1)
+		altitude = altitude_offset + p_a[2] + d_a * float(i) / (N+1)
 
 		time = time_beg + (time_end - time_beg) * float(i) / (N+1)
 
@@ -91,7 +90,7 @@ def path_at(path, i):
 	return (path[0][i], path[1][i], path[2][i], path[3][i], path[4][i], path[5][i])
 
 def point_to_string(p):
-	return "@" + str(p[0]) + "," + str(p[1]) + "," + str(p[2]) + "a," + "35y," + str(p[4]) + "h,"+ str(p[3])
+	return "@" + str(p[0]) + "," + str(p[1]) + "," + str(p[2]) + "a," + "35y," + str((p[4] % 360)) + "h,"+ str(p[3])
 
 
 from scipy.interpolate import CubicSpline
@@ -105,7 +104,6 @@ def spline_interpolation(path, nb_frame):
 	spline_y = CubicSpline(path[5], path[1])
 	spline_a = CubicSpline(path[5], path[2])
 	spline_tilt = CubicSpline(path[5], path[3])
-	spline_h = CubicSpline(path[5], path[4])
 
 	list_t = []
 	for i in range(int(nb_frame)):
@@ -115,16 +113,59 @@ def spline_interpolation(path, nb_frame):
 	y = spline_y(list_t)
 	a = spline_a(list_t)
 	tilt = spline_tilt(list_t)
+
+	# make sure that h is monotically decreasing
+
+	spline_h = CubicSpline(path[5], path[4])
 	h = spline_h(list_t)
 	h = [hh % 360 for hh in h]
 	time = list_t
-
-# overide tilt and h
-#	a = [2800 for a_ in a]
-#	tilt = [0 for tilt_ in h]
-#	h = [0 for hh in h]
-
 	return (x, y, a, tilt, h, time)
 
 	#	res_list
 
+
+# Get a list of destination (in the right order)
+# Will do a half-rotation around each destination
+# Need to first compute entry degree
+
+def plan_trip(list_places):
+
+	path = [[],[],[],[],[],[]]
+
+	# Compute direction between two destination.
+	# We want to end with it as the last direction for the rotation
+
+	# And start the next rotation with this direction
+	time = 0.0
+	current_h = 0
+	next_h = 0
+	for x in range(len(list_places)-1):
+		time_in = time
+		time_out = time + 2.0
+
+		# next_dir is the target dir for the end of this rotation
+		dx = list_places[x+1][0] - list_places[x][0]
+		dy = list_places[x+1][1] - list_places[x][1]
+
+		h = (acos(dx / sqrt(dx * dx + dy * dy)) / (2.0 * pi) * 360) % 360
+
+		# threshold so spline interpolate rotation during traveling as well
+
+		h = h - 15
+
+		if x == 0:
+			current_h = ( h + 180 ) % 360
+
+		add_rotation(path, list_places[x], 1000, 40, 5, time_in, time_out, current_h, (h - current_h) % 360 )
+
+		time = time + 4.0
+		current_h = h
+
+	time_in = time
+	time_out = time + 2.0
+	add_rotation(path, list_places[-1], 1000, 40, 5, time_in, time_out, current_h, 180 )
+
+	print(path[5])
+
+	return path
