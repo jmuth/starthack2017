@@ -166,6 +166,6 @@ def plan_trip(list_places):
 	time_out = time + 2.0
 	add_rotation(path, list_places[-1], 1000, 40, 5, time_in, time_out, current_h, 180 )
 
-	print(path[5])
+	# print(path[5])
 
 	return path

@@ -14,7 +14,6 @@ def execute_command(command):
     if len(result) > 0 and not result.isspace():
         raise Exception(result)
 
-
 def do_screen_capturing(driver, url, screen_path, width, height):
 
     # it save service log file in same directory
@@ -31,6 +30,10 @@ def do_screen_capturing(driver, url, screen_path, width, height):
     time.sleep(6)
 
     # disable label
+    # Click menu button
+    menu_button = WebDriverWait(driver, 10).until(
+        EC.presence_of_element_located((By.CLASS_NAME, "searchbox-hamburger"))
+    )
 
     # Click menu button
     menu_button = WebDriverWait(driver, 10).until(
@@ -44,7 +47,7 @@ def do_screen_capturing(driver, url, screen_path, width, height):
         EC.presence_of_element_located((By.CLASS_NAME, "widget-settings-sub-button-label"))
     )
     
-    
+
     #wait.until(lambda driver : driver.find_element_by_xpath("//*[contains(@class,'widget-settings-sub-button-label')]"))
 
     '''
@@ -90,6 +93,7 @@ def get_screen_shot(**kwargs):
     crop_path = screen_path
 
     do_screen_capturing(driver, url, screen_path, width, height)
+
 
     if crop:
         if not crop_replace:
