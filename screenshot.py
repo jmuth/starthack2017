@@ -17,7 +17,8 @@ def execute_command(command):
 
 
 def do_screen_capturing(url, screen_path, width, height):
-    driver = webdriver.Chrome("/Users/valentin/Documents/Hackathons/StartHack/chromedriver")
+    # driver = webdriver.Chrome("/Users/valentin/Documents/Hackathons/StartHack/chromedriver")
+    driver = webdriver.Chrome()
 
     # it save service log file in same directory
     # if you want to have log file stored else where
@@ -32,35 +33,41 @@ def do_screen_capturing(url, screen_path, width, height):
 
     time.sleep(6)
 
-    # disable label
+    try:
+        # disable label
+        # Click menu button
+        menu_button = WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.CLASS_NAME, "searchbox-hamburger"))
+        )
 
-    # Click menu button
-    menu_button = WebDriverWait(driver, 10).until(
-        EC.presence_of_element_located((By.CLASS_NAME, "searchbox-hamburger"))
-    )
-    
-    menu_button.click()
+        menu_button.click()
 
-    # Click disable able
-    disable_label_button = WebDriverWait(driver, 10).until(
-        EC.presence_of_element_located((By.CLASS_NAME, "widget-settings-sub-button-label"))
-    )
-    
-    #wait.until(lambda driver : driver.find_element_by_xpath("//*[contains(@class,'widget-settings-sub-button-label')]"))
+        # Click disable label
+        disable_label_button = WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.CLASS_NAME, "widget-settings-sub-button-label"))
+        )
 
-    '''
-    # Element invisible during a few ms
-    time.sleep(0.5)
+        #wait.until(lambda driver : driver.find_element_by_xpath("//*[contains(@class,'widget-settings-sub-button-label')]"))
 
-    driver.find_element_by_class_name('widget-settings-sub-button-label').click()
-    '''
+        '''
+        # Element invisible during a few ms
+        time.sleep(0.5)
 
-    #disable_label_button = driver.find_element_by_class_name('widget-settings-sub-button-label')
-    driver.execute_script('arguments[0].click()', disable_label_button)
+        driver.find_element_by_class_name('widget-settings-sub-button-label').click()
+        '''
 
-    time.sleep(1)
+        #disable_label_button = driver.find_element_by_class_name('widget-settings-sub-button-label')
+        driver.execute_script('arguments[0].click()', disable_label_button)
 
-    driver.save_screenshot(screen_path)
+        time.sleep(1)
+
+        driver.save_screenshot(screen_path)
+
+    # quit chrome even if there is an error
+    except Exception as err:
+        driver.quit()
+        raise ValueError(err)
+
     driver.quit()
 
 def do_crop(params):
@@ -90,6 +97,7 @@ def get_screen_shot(**kwargs):
     crop_path = screen_path
 
     do_screen_capturing(url, screen_path, width, height)
+
 
     if crop:
         if not crop_replace:

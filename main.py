@@ -1,44 +1,57 @@
 from path import *
 from screenshot import *
 from video import *
-#from sights import get_sights
+
+# from sights import get_sights
 
 if __name__ == '__main__':
-	#get_sights('London')
+    # get_sights('London')
 
-	p_eiffel = (48.8584, 2.2945, 60)
-	p_triomphe = (48.8738, 2.2950, 60)
-	p_chaillot = (48.8620159,2.2878386, 80)
-	p_grand_palais = (48.8663031,2.3127906, 80)
-	p_louvre = (48.8612266,2.3357741, 80)
-	p_monmartre = (48.8866677,2.3430436, 120)
+    p_eiffel = (48.8584, 2.2945, 60)
+    p_triomphe = (48.8738, 2.2950, 60)
+    p_chaillot = (48.8620159, 2.2878386, 80)
+    p_grand_palais = (48.8663031, 2.3127906, 80)
+    p_louvre = (48.8612266, 2.3357741, 80)
+    p_monmartre = (48.8866677, 2.3430436, 120)
 
-	path = [[],[],[],[],[],[]]
+    path = [[], [], [], [], [], []]
 
-	path = plan_trip((p_eiffel, p_triomphe, p_chaillot, p_grand_palais, p_louvre, p_monmartre))
+    path = plan_trip((p_eiffel, p_triomphe, p_chaillot, p_grand_palais, p_louvre, p_monmartre))
 
-	# ensure that h are in monotically decreasing
-	for x in range(1,len(path[4])):
-		if path[4][x] > path[4][x-1]:
-			path[4][x] = path[4][x] - 360.0
+    # ensure that h are in monotically decreasing
+    for x in range(1, len(path[4])):
+        if path[4][x] > path[4][x - 1]:
+            path[4][x] = path[4][x] - 360.0
 
-	#for i in range(len(path[0])):
-	#	print("https://www.google.ch/maps/" + point_to_string(path_at(path, i)) + "t/data=!3m1!1e3")
+    interpolated_path = spline_interpolation(path, 150)
 
-	#print([int(x) for x in path[4]])
-	interpolated_path = spline_interpolation(path, 150)
+    # interpolated_path = interpolated_path[0:4]
+    print("+++++++ Interpolated path +++++++")
 
-	print("+++++++ Interpolated path +++++++")
+    missed = []
+    for i in range(len(interpolated_path[0])):
+        print("Creating image %d/%d..." % (i + 1, len(interpolated_path[0])))
+        url = "https://www.google.ch/maps/" + point_to_string(path_at(interpolated_path, i)) + "t/data=!3m1!1e3"
+        n = i + 1
+        try:
+            screenshot_url(url, n)
+        except ValueError as err:
+            miss_screenshot = [url, n]
+            print("[ERROR] shot", n, "missed:", url)
+            missed.append(miss_screenshot)
 
-	for i in range(len(interpolated_path[0])):
-		print("Creating image %d/%d..." % (i+1, len(interpolated_path[0])))
-		screenshot_url("https://www.google.ch/maps/" + point_to_string(path_at(interpolated_path, i)) + "t/data=!3m1!1e3", i+1)
+    print("[INFO] try to recover missed shots")
+    while(len(missed) != 0):
+        try:
+            shot_to_try = missed.pop(-1)
+            screenshot_url(shot_to_try[0], shot_to_try[1])
+        except ValueError as err:
+            print("[ERROR] shot", n, "missed again:", url)
+            missed.append(miss_screenshot)
 
-	images_to_video('out/', '.png', 'path.mp4')
+    images_to_video('out/', '.png', 'path.mp4')
 
-#	print([int(x) for x in interpolated_path[4]])
-
-	'''
+    '''
 	import matplotlib.pyplot as plt
 	ax = plt.axes()
 	ax.plot(path[0], path[1], 'o', interpolated_path[0], interpolated_path[1], '-')
