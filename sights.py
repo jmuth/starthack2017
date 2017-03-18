@@ -2,8 +2,6 @@ import time
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 import googlemaps
-from datetime import datetime
-
 
 def get_sights(name='Fribourg'):
     print("Getting sights of:", name)

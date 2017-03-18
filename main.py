@@ -39,7 +39,7 @@ if __name__ == '__main__':
 	#	print("https://www.google.ch/maps/" + point_to_string(path_at(path, i)) + "t/data=!3m1!1e3")
 
 	#print([int(x) for x in path[4]])
-	interpolated_path = spline_interpolation(path, 35)
+	interpolated_path = spline_interpolation(path, 150)
 
 	print("+++++++ Interpolated path +++++++")
 
