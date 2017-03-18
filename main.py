@@ -2,11 +2,11 @@ from path import *
 from screenshot import *
 from video import *
 from selenium import webdriver
-import threading
+import threading, timeit
 from queue import Queue
 
 NB_THREADS = 4
-NB_FRAMES = 20
+NB_FRAMES = 150
 
 
 # from sights import get_sights
@@ -20,14 +20,17 @@ def worker():
         url = item[0]
         image_nb = item[1]
         if screenshot_url(driver, url, image_nb) == 0:
-            print(threading.current_thread().name + " computed image " + str(image_nb))
+            print(threading.current_thread().name + " computed image " + str(image_nb) + ", %d remaining" % q.qsize())
             q.task_done()
         else:
-            print(threading.current_thread().name + " failed to compute image " + str(image_nb) + " !!!!!!!!!")
+            print(threading.current_thread().name + " failed to compute image " + str(image_nb)  + ", %d remaining !!!!!!!!!" % q.qsize())
             q.task_done()
             q.put(item)
 
 if __name__ == '__main__':
+
+	start = timeit.default_timer()
+
     # get_sights('London')
 
     '''
@@ -52,7 +55,7 @@ if __name__ == '__main__':
 
 
     path = [[],[],[],[],[],[]]
-    path = plan_trip((p_perolle, p_poya), 500)
+    path = plan_trip((p_perolle, p_poya, p_cathedral, p_st_michel), 500)
     # ensure that h are in monotically decreasing
     for x in range(1, len(path[4])):
         if path[4][x] > path[4][x - 1]:
@@ -99,6 +102,10 @@ if __name__ == '__main__':
     driver.quit()
     '''
     images_to_video('out/sof_\%5d', '.png', 'videos/path.mp4')
+
+    stop = timeit.default_timer()
+
+    print("Time taken: %d" % (stop - start))
 
     '''
     import matplotlib.pyplot as plt
