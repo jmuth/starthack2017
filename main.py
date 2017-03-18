@@ -63,7 +63,6 @@ if __name__ == '__main__':
             path[4][x] = path[4][x] - 360.0
 
     interpolated_path = spline_interpolation(path, NB_FRAMES)
-    print(interpolated_path[4])
 
     q = Queue()
     for i in range(len(interpolated_path[0])):
