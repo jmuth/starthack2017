@@ -28,7 +28,6 @@ def do_screen_capturing(url, screen_path, width, height):
         driver.set_window_size(width, height)
 
     driver.get(url)
-    time.sleep(6)
 
     wait = ui.WebDriverWait(driver, 10)
 
@@ -50,7 +49,7 @@ def do_screen_capturing(url, screen_path, width, height):
     disable_label_button = driver.find_element_by_class_name('widget-settings-sub-button-label')
     driver.execute_script('arguments[0].click()', disable_label_button)
 
-    time.sleep(1)
+    time.sleep(6)
 
     driver.save_screenshot(screen_path)
     driver.quit()
