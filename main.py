@@ -2,10 +2,14 @@ from path import *
 from screenshot import *
 from video import *
 from selenium import webdriver
-import threading
+import threading, timeit
 from queue import Queue
+from sights import get_sights
 
 NB_THREADS = 4
+NB_FRAMES = 200
+NAME_PLACE = 'saintgall'
+N_SIGHTS = 4
 
 
 # from sights import get_sights
@@ -19,17 +23,22 @@ def worker():
         url = item[0]
         image_nb = item[1]
         if screenshot_url(driver, url, image_nb) == 0:
-            print(threading.current_thread().name + " computed image " + str(image_nb))
+            print(threading.current_thread().name + " computed image " + str(image_nb) + ", %d remaining" % q.qsize())
             q.task_done()
         else:
-            print(threading.current_thread().name + " failed to compute image " + str(image_nb) + " !!!!!!!!!")
+            print(threading.current_thread().name + " failed to compute image " + str(image_nb)  + ", %d remaining !!!!!!!!!" % q.qsize())
             q.task_done()
             q.put(item)
 
-
 if __name__ == '__main__':
-    # get_sights('London')
+    sights = get_sights(NAME_PLACE)[:N_SIGHTS]
 
+    # looping back to the first sight
+    sights.append(sights[0])
+
+    start = timeit.default_timer()
+
+    '''
     p_eiffel = (48.8584, 2.2945, 60)
     p_triomphe = (48.8738, 2.2950, 60)
     p_chaillot = (48.8620159, 2.2878386, 80)
@@ -39,14 +48,26 @@ if __name__ == '__main__':
 
     path = [[], [], [], [], [], []]
 
-    path = plan_trip((p_eiffel, p_triomphe, p_chaillot, p_grand_palais, p_louvre, p_monmartre, p_eiffel), 900)
+    path = plan_trip(sights, 900)
+
+    '''
+
+    # # fribourg
+    # p_poya = (46.8133523,7.1645176, 60)
+    # p_cathedral = (46.8062408,7.1629309, 60)
+    # p_st_michel = (46.8066934,7.157652, 60)
+    # p_perolle = (46.7940545,7.1470015, 60)
+
+
+    path = [[],[],[],[],[],[]]
+    path = plan_trip(sights, 500)
 
     # ensure that h are in monotically decreasing
     for x in range(1, len(path[4])):
-        if path[4][x] > path[4][x - 1]:
+        while path[4][x] > path[4][x - 1]:
             path[4][x] = path[4][x] - 360.0
 
-    interpolated_path = spline_interpolation(path, 600)
+    interpolated_path = spline_interpolation(path, NB_FRAMES)
 
     q = Queue()
     for i in range(len(interpolated_path[0])):
@@ -86,7 +107,11 @@ if __name__ == '__main__':
 
     driver.quit()
     '''
-    images_to_video('out/sof_%', '.png', 'videos/path.mp4')
+    images_to_video('out/sof_\%5d', '.png', 'videos/' + NAME_PLACE + '.mp4')
+
+    stop = timeit.default_timer()
+
+    print("Time taken: %d seconds" % (stop - start))
 
     '''
     import matplotlib.pyplot as plt

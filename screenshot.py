@@ -5,6 +5,8 @@ from selenium.webdriver.support import expected_conditions as EC
 
 import os, base64, time
 
+TIME_OUT = 15
+
 abspath = lambda *p: os.path.abspath(os.path.join(*p))
 ROOT = abspath(os.path.dirname(__file__))
 
@@ -31,19 +33,19 @@ def do_screen_capturing(driver, url, screen_path, width, height):
 
     # disable label
     # Click menu button
-    menu_button = WebDriverWait(driver, 10).until(
+    menu_button = WebDriverWait(driver, TIME_OUT).until(
         EC.presence_of_element_located((By.CLASS_NAME, "searchbox-hamburger"))
     )
 
     # Click menu button
-    menu_button = WebDriverWait(driver, 10).until(
+    menu_button = WebDriverWait(driver, TIME_OUT).until(
         EC.presence_of_element_located((By.CLASS_NAME, "searchbox-hamburger"))
     )
     
     driver.execute_script('arguments[0].click()', menu_button)
 
     # Click disable able
-    disable_label_button = WebDriverWait(driver, 10).until(
+    disable_label_button = WebDriverWait(driver, TIME_OUT).until(
         EC.presence_of_element_located((By.CLASS_NAME, "widget-settings-sub-button-label"))
     )
     
