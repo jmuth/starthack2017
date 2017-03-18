@@ -29,4 +29,4 @@ def compute_camera_values(origin_x, origin_y, rayon_meter, tilt, rev):
 	#meter_rayon = coordinate_distance(origin_x, origin_y, x, y)
 	h = (360.0 - 90.0 - 360.0 * rev) % 360.0
 	altitude = rayon_meter * cos(tilt / 360.0 * 2.0 * pi)
-	return "@" + str(x) + "," + str(y) + "," + str(altitude) + "a," + "35y," + str(h) + "h,"+ str(tilt) + "t/data=!3m1!1e3"
+	return "@" + str(x) + "," + str(y) + "," + str(altitude) + "a," + "35y," + str(h) + "h,"+ str(tilt) + "t/data=!3m1!1e3&style=feature:all|element:labels|visibility:off"
