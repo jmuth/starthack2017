@@ -1,19 +1,12 @@
 from path import *
 from screenshot import *
 from video import *
-from sights import get_sights
+#from sights import get_sights
 
 if __name__ == '__main__':
-    get_sights('London')
+	#get_sights('London')
 
-	N = 10.0
-	#for i in range (int(N)):
-		# Top-down Eiffel Tower
-		#print("https://www.google.ch/maps/" + compute_camera_values(48.8584, 2.2945, 1200, 90.0 * i / N, 0.0))
-		# 360 Eiffel Tower
-		#print("https://www.google.ch/maps/" + compute_camera_values(48.8584, 2.2945, 1200, 40, i / N))
-
-	p_eiffel = (48.8584, 2.2945, 60) 
+	p_eiffel = (48.8584, 2.2945, 60)
 	p_triomphe = (48.8738, 2.2950, 60)
 	p_chaillot = (48.8620159,2.2878386, 80)
 	p_grand_palais = (48.8663031,2.3127906, 80)
@@ -21,12 +14,6 @@ if __name__ == '__main__':
 	p_monmartre = (48.8866677,2.3430436, 120)
 
 	path = [[],[],[],[],[],[]]
-
-	#add_traveling(path, p_eiffel, p_triomphe, N, 0 ,2)
-
-	#add_rotation(path, p_eiffel, 1000, 40, 5, 0.0, 2.0, 0.0 , 180.0)
-	#add_traveling(path, p_eiffel, p_triomphe, 5, 2.0 ,5.0, 750)
-	#add_rotation(path, p_triomphe, 800, 40, 5, 5.0, 10.0)
 
 	path = plan_trip((p_eiffel, p_triomphe, p_chaillot, p_grand_palais, p_louvre, p_monmartre))
 
