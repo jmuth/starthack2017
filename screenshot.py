@@ -15,8 +15,8 @@ def execute_command(command):
 
 
 def do_screen_capturing(url, screen_path, width, height):
-    print "Capturing screen.."
-    driver = webdriver.Chrome("/Users/valentin/Documents/Hackathons/StartHack/chromedriver")
+    print("Capturing screen..")
+    driver = webdriver.Chrome()
     # it save service log file in same directory
     # if you want to have log file stored else where
     # initialize the webdriver.PhantomJS() as
@@ -29,7 +29,7 @@ def do_screen_capturing(url, screen_path, width, height):
     time.sleep(8)
 
     # Get canvas
-    canvas = driver.find_element_by_css_selector(".widget-scene-canvas")
+        canvas = driver.find_element_by_css_selector(".widget-scene-canvas")
 
     print(canvas)
     # get the canvas as a PNG base64 string
@@ -50,7 +50,7 @@ def do_screen_capturing(url, screen_path, width, height):
     #driver.quit()
 
 def do_crop(params):
-    print "Croping captured image.."
+    print("Croping captured image..")
     command = [
         'convert',
         params['screen_path'],
