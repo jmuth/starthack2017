@@ -1,52 +1,92 @@
 from path import *
-#from screenshot import *
-#from video import *
+from screenshot import *
+from video import *
+from selenium import webdriver
+import threading
+from queue import Queue
+
+NB_THREADS = 4
+
 #from sights import get_sights
 
-if __name__ == '__main__':
-    #get_sights('London')
+def worker():
+	driver = webdriver.Chrome('/Users/valentin/Documents/Hackathons/StartHack/chromedriver')
+	while True:
+		item = q.get()
+		url = item[0]
+		image_nb = item[1]
+		if screenshot_url(driver, url, image_nb) == 0:
+			print(threading.current_thread().name + " computed image " + str(image_nb))
+			q.task_done()
+		else:
+			print(threading.current_thread().name + " failed to compute image " + str(image_nb) + " !!!!!!!!!")
+			q.task_done()
+			q.put(item)
 
-    # paris
+if __name__ == '__main__':
+    # get_sights('London')
+
     p_eiffel = (48.8584, 2.2945, 60)
     p_triomphe = (48.8738, 2.2950, 60)
-    p_chaillot = (48.8620159,2.2878386, 80)
-    p_grand_palais = (48.8663031,2.3127906, 80)
-    p_louvre = (48.8612266,2.3357741, 80)
-    p_monmartre = (48.8866677,2.3430436, 120)
+    p_chaillot = (48.8620159, 2.2878386, 80)
+    p_grand_palais = (48.8663031, 2.3127906, 80)
+    p_louvre = (48.8612266, 2.3357741, 80)
+    p_monmartre = (48.8866677, 2.3430436, 120)
 
-    # fribourg
-    p_poya = (46.8133523,7.1645176, 60)
-    p_cathedral = (46.8062408,7.1629309, 60)
-    p_st_michel = (46.8066934,7.157652, 60)
-    p_perolle = (46.7940545,7.1470015, 60)
+    path = [[], [], [], [], [], []]
 
+    path = plan_trip((p_eiffel, p_triomphe, p_chaillot, p_grand_palais, p_louvre, p_monmartre))
 
-    path = [[],[],[],[],[],[]]
-
-    #path = plan_trip((p_eiffel, p_triomphe, p_chaillot, p_grand_palais, p_louvre, p_monmartre))
-    #path = plan_trip((p_eiffel, p_louvre, p_monmartre, p_chaillot, p_grand_palais))
-    #path = plan_trip((p_poya, p_cathedral, p_st_michel, p_perolle), 400)
-    path = plan_trip((p_perolle, p_poya, p_cathedral), 500)
     # ensure that h are in monotically decreasing
-    for x in range(1,len(path[4])):
-        if path[4][x] > path[4][x-1]:
+    for x in range(1, len(path[4])):
+        if path[4][x] > path[4][x - 1]:
             path[4][x] = path[4][x] - 360.0
 
-    for i in range(len(path[0])):
-       print("https://www.google.ch/maps/" + point_to_string(path_at(path, i)) + "t/data=!3m1!1e3")
+    interpolated_path = spline_interpolation(path, 150)
 
-    #print([int(x) for x in path[4]])
-    interpolated_path = spline_interpolation(path, 35)
+    for i in range(NB_THREADS):
+    	t = threading.Thread(target=worker)
+    	t.daemon = True
+    	t.start()
 
-    print("+++++++ Interpolated path +++++++")
-
+    q = Queue()
     for i in range(len(interpolated_path[0])):
-        print("https://www.google.ch/maps/" + point_to_string(path_at(interpolated_path, i)) + "t/data=!3m1!1e3")
-    #screenshot_url("https://www.google.ch/maps/" + point_to_string(path_at(interpolated_path, i)) + "t/data=!3m1!1e3", i+1)
+    	url = "https://www.google.ch/maps/" + point_to_string(path_at(interpolated_path, i)) + "t/data=!3m1!1e3"
+    	q.put((url, i+1))
+    q.join()
 
-    #images_to_video('out/', '.png', 'path.mp4')
+    '''
+    driver = webdriver.Chrome()
 
-#   print([int(x) for x in interpolated_path[4]])
+    missed = []
+    for i in range(len(interpolated_path[0])):
+        print("Creating image %d/%d..." % (i + 1, len(interpolated_path[0])))
+        url = "https://www.google.ch/maps/" + point_to_string(path_at(interpolated_path, i)) + "t/data=!3m1!1e3"
+        n = i + 1
+        try:
+            screenshot_url(driver, url, n)
+        except Exception as err:
+            miss_screenshot = [url, n]
+            print("[ERROR] shot", n, "missed:", url)
+            missed.append(miss_screenshot)
+
+    print("[INFO] try to recover missed shots")
+    while(len(missed) != 0):
+        try:
+            shot_to_try = missed.pop(-1)
+            screenshot_url(shot_to_try[0], shot_to_try[1])
+        except Exception as err:
+            print("[ERROR] shot", n, "missed again:", url)
+            missed.append(miss_screenshot)
+
+    driver.quit()
+    '''
+    images_to_video('out/', '.png', 'path.mp4')
+
+    '''
+    import matplotlib.pyplot as plt
+    ax = plt.axes()
+    ax.plot(path[0], path[1], 'o', interpolated_path[0], interpolated_path[1], '-')
 
     import matplotlib.pyplot as plt
     ax = plt.axes()
@@ -59,16 +99,8 @@ if __name__ == '__main__':
     #   plt.arrow(path[0][i], path[1][i], d_x[i], d_y[i], fc="k", ec="k", head_width=0.001, head_length=0.001 )
     #plt.arrow(interpolated_path[0][i], interpolated_path[1][i], d_x[i], d_y[i], fc="k", ec="k", head_width=0.00001, head_length=0.001 )
 
-
-    #ax.axis([48.84, 48.9, 2.28, 2.32])
-    #ax.arrow( 1.5, 0.8, 0.2, -0.2, fc="k", ec="k", head_width=0.05, head_length=0.1 )
-
-    plt.show()
-
-    plt.plot(path[5], path[4], 'o', interpolated_path[5], interpolated_path[4], '-', interpolated_path[5], interpolated_path[3], '--')
-
     plt.show()
     print(interpolated_path[4])
-    
+	'''
 # Point {x, y, z}
 # CameraPoint {p, t, h}
