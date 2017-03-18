@@ -8,6 +8,7 @@ from sights import get_sights
 
 NB_THREADS = 4
 NB_FRAMES = 150
+MAX_NB_SIGHTS = 3
 
 
 # from sights import get_sights
@@ -30,7 +31,7 @@ def worker():
 
 if __name__ == '__main__':
     name_place = 'London'
-    sights = get_sights(name_place)[:3]
+    sights = get_sights(name_place)[:MAX_NB_SIGHTS]
 
     # looping back to the first sight
     sights.append(sights[0])
