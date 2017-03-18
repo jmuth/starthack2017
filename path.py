@@ -124,6 +124,10 @@ def spline_interpolation(path, nb_frame):
     return (x, y, a, tilt, h, time)
 
 NB_PT = 5
+
+def radians_from_circle(x, y):
+    return (atan2(-y, x) / (2.0 * pi) * 360.0 + 90) % 360
+
 # Get a list of destination (in the right order)
 # Will do a half-rotation around each destination
 # Need to first compute entry degree
@@ -203,8 +207,12 @@ def plan_trip(list_places, radius = 800, tilt = 55, time_per_destination = 2.0):
 
     # add points in between destinations at higher altitude
 
-    #if True:
-    #    return path
+    for x in range(len(path[0])-1):
+        if abs(path[4][x] - path[4][x+1]) > 360:
+             path[4][x+1] =  path[4][x] + (path[4][x+1] - path[4][x]) % 360  
+
+    if False:
+        return path
 
     spline_h = CubicSpline(path[5], path[4])
     for x in range(0, len(list_places) - 1):
