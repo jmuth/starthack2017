@@ -119,14 +119,137 @@ def spline_interpolation(path, nb_frame):
 
     spline_h = CubicSpline(path[5], path[4])
     h = spline_h(list_t)
-    h = [hh % 360 for hh in h]
+    #h = [hh % 360 for hh in h]
     time = list_t
     return (x, y, a, tilt, h, time)
 
-
+NB_PT = 5
 # Get a list of destination (in the right order)
 # Will do a half-rotation around each destination
 # Need to first compute entry degree
+def plan_trip(list_places, radius = 800, tilt = 55, time_per_destination = 2.0):
+
+    path = [[],[],[],[],[],[]]
+
+    # Compute direction between two destination.
+    # We want to end with it as the last direction for the rotation
+
+    # And start the next rotation with this direction
+    time = 0.0
+    current_h = 0
+    next_h = 0
+
+    sens = 1
+    for x in range(len(list_places)-1):
+        time_in = time
+        time_out = time + time_per_destination
+
+        # next_dir is the target dir for the end of this rotation
+        dx = list_places[x+1][0] - list_places[x][0]
+        dy = list_places[x+1][1] - list_places[x][1]
+
+        distance = sqrt(dx * dx + dy * dy)
+
+        # direction to the next destination
+        '''
+        if dx == 0.0:
+            if dy < 0:
+                h = 90
+            else:
+                h = 270
+        else:
+            h = (atan(dy / dx) / (2.0 * pi) * 360) % 360
+
+        if dy == 0.0:
+            if dx < 0:
+                h = 180
+            else:
+                h = 0
+
+        h = abs(h) + 90
+        '''
+        h = atan2(-dy, dx) / (2.0 * pi) * 360.0 + 90
+
+        print("dx: " + str(dx / distance) + " dy: " + str(dy / distance) + " h: " + str(h))
+        
+        # threshold so spline interpolate rotation during traveling as well
+        #h = h - 15
+
+        end_h = (h + sens * 90) % 360;
+        print("end_h: " + str(end_h))
+
+        if x == 0:
+            current_h = ( end_h + 180 )
+
+        rot_width = abs(end_h - current_h)
+        if rot_width < 90:
+            rot_width = rot_width + 269 
+        add_rotation(path, list_places[x], radius, tilt, NB_PT, time_in, time_out, current_h % 360, - sens * rot_width)
+
+        time_travel = distance / 0.02 * time_per_destination
+
+        current_h = (end_h + 180) % 360;
+        print(current_h)
+        #current_h = (current_h + sens * (end_h - current_h)) % 360
+
+        sens = sens * (-1)
+
+        time = time + time_per_destination + time_travel
+
+
+    time_in = time
+    time_out = time + time_per_destination
+    add_rotation(path, list_places[-1], radius, tilt, NB_PT, time_in, time_out, (current_h) % 360, - sens * 180 )
+
+    # add points in between destinations at higher altitude
+
+    #if True:
+    #    return path
+
+    spline_h = CubicSpline(path[5], path[4])
+    for x in range(0, len(list_places) - 1):
+        distance = sqrt(dx * dx + dy * dy)
+        time_travel = distance / 0.02 * time_per_destination
+
+        idx = (x + 1) * NB_PT + x
+
+        dx = list_places[x+1][0] - list_places[x][0]
+        dy = list_places[x+1][1] - list_places[x][1]
+        #h = (atan(dy / dx) / (2.0 * pi) * 360 - 90) % 360
+        '''
+        if dx == 0.0:
+            if dy < 0:
+                h = 90
+            else:
+                h = 270
+        else:
+            h = (atan(dy / dx) / (2.0 * pi) * 360) % 360
+
+        if dy == 0.0:
+            if dx < 0:
+                h = 180
+            else:
+                h = 0
+
+        h = abs(h) + 90
+        '''
+        h = atan2(-dy, dx) / (2.0 * pi) * 360.0 + 90
+        distance_m = coordinate_distance(list_places[x][0], list_places[x][1], list_places[x+1][0], list_places[x+1][1])
+        path[0].insert(idx, (list_places[x][0] + list_places[x+1][0]) / 2.0)
+        path[1].insert(idx, (list_places[x][1] + list_places[x+1][1]) / 2.0)
+        path[2].insert(idx, (list_places[x][2] + list_places[x+1][2] + distance_m * 0.5) / 2.0)
+        path[3].insert(idx, 40.0)
+        time_inter = (path[5][idx - 1] + path[5][idx]) / 2.0
+        #path[4].insert(idx, h)       
+        path[4].insert(idx, spline_h(time_inter))        
+        path[5].insert(idx, time_inter)
+
+    #print(path[2])
+    #print(path[5])
+
+    return path
+
+'''
 def plan_trip(list_places, radius = 800, tilt = 55, time_per_destination = 2.0):
 
     path = [[],[],[],[],[],[]]
@@ -147,6 +270,7 @@ def plan_trip(list_places, radius = 800, tilt = 55, time_per_destination = 2.0):
         dy = list_places[x+1][1] - list_places[x][1]
 
         distance = sqrt(dx * dx + dy * dy)
+
 
         h = (acos(dx / distance) / (2.0 * pi) * 360) % 360
 
@@ -190,8 +314,7 @@ def plan_trip(list_places, radius = 800, tilt = 55, time_per_destination = 2.0):
     #print(path[5])
 
     return path
-
-
+'''
 '''
 def plan_trip(list_places, radius = 800, time_per_destination = 2.0):
 
