@@ -15,6 +15,7 @@ def meter_to_coordinate(m_x, m_y, lat):
     coord_y = m_y / (6378137.0 * cos(lat / 360.0 * 2 * pi))
     return (coord_x, coord_y)
 
+
 # Return string for google maps address
 # Takes x and y coordinates, rayon of the rotation, tilt and revolution (between 0 and 1)
 def compute_camera_values(origin_x, origin_y, rayon_meter, tilt, rev):
