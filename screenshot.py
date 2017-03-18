@@ -76,8 +76,8 @@ def screenshot_360(N, origin_x, origin_y, rayon_meter, tilt):
     for i in range (int(N)):
         url = "https://www.google.ch/maps/" + compute_camera_values(origin_x, origin_y, rayon_meter, tilt, i / N)
         screen_path, crop_path = get_screen_shot(
-            url=url, path='out/', filename='sof_%d.png' % i,
-            crop=True, crop_replace=False,
+            url=url, path='out/', filename='sof_%d.png' % (i+1),
+            crop=True, crop_replace=True,
             crop_width=1600, crop_height=900,
             crop_offset_width=200, crop_offset_height=200
         )
