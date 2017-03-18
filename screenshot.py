@@ -16,7 +16,8 @@ def execute_command(command):
 
 def do_screen_capturing(url, screen_path, width, height):
     print("Capturing screen..")
-    driver = webdriver.Chrome("/Users/valentin/Documents/Hackathons/StartHack/chromedriver")
+    # driver = webdriver.Chrome("/Users/valentin/Documents/Hackathons/StartHack/chromedriver")
+    driver = webdriver.Chrome()
 
     # it save service log file in same directory
     # if you want to have log file stored else where
