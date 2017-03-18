@@ -28,26 +28,8 @@ def do_screen_capturing(url, screen_path, width, height):
     driver.get(url)
     time.sleep(8)
 
-    # Get canvas
-        canvas = driver.find_element_by_css_selector(".widget-scene-canvas")
-
-    print(canvas)
-    # get the canvas as a PNG base64 string
-    driver.execute_script("var image = arguments[0].toDataURL('image/png').replace('image/png', 'image/octet-stream'); window.location.href=image;", canvas)
-
-    '''
-    print(canvas_base64)
-
-    # decode
-    canvas_png = base64.b64decode(canvas_base64)
-
-    # save to a file
-    with open(r"%s" % screen_path, 'wb') as f:
-        f.write(canvas_png)
-    '''
-
-    #driver.save_screenshot(screen_path)
-    #driver.quit()
+    driver.save_screenshot(screen_path)
+    driver.quit()
 
 def do_crop(params):
     print("Croping captured image..")
