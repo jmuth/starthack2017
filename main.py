@@ -101,16 +101,16 @@ if __name__ == '__main__':
     ax = plt.axes()
     ax.plot(path[0], path[1], 'o', interpolated_path[0], interpolated_path[1], '-')
 
-	#d_x = [sin(h * 2.0 * pi / 360 + pi / 4.0) * 0.003 for h in path[4]]
-	#d_y = [cos(h * 2.0 * pi / 360 + pi / 4.0) * 0.003 for h in path[4]]
+    import matplotlib.pyplot as plt
+    ax = plt.axes()
+    ax.plot(path[0], path[1], 'o', interpolated_path[0], interpolated_path[1], '-')
 
-	#for i in range(len(path[0])):
-	#	plt.arrow(path[0][i], path[1][i], d_x[i], d_y[i], fc="k", ec="k", head_width=0.001, head_length=0.001 )
-		#plt.arrow(interpolated_path[0][i], interpolated_path[1][i], d_x[i], d_y[i], fc="k", ec="k", head_width=0.00001, head_length=0.001 )
+    d_x = [sin(h * 2.0 * pi / 360 + pi / 4.0) * 0.003 for h in path[4]]
+    d_y = [cos(h * 2.0 * pi / 360 + pi / 4.0) * 0.003 for h in path[4]]
 
-
-	#ax.axis([48.84, 48.9, 2.28, 2.32])
-	#ax.arrow( 1.5, 0.8, 0.2, -0.2, fc="k", ec="k", head_width=0.05, head_length=0.1 )
+    #for i in range(len(path[0])):
+    #   plt.arrow(path[0][i], path[1][i], d_x[i], d_y[i], fc="k", ec="k", head_width=0.001, head_length=0.001 )
+    #plt.arrow(interpolated_path[0][i], interpolated_path[1][i], d_x[i], d_y[i], fc="k", ec="k", head_width=0.00001, head_length=0.001 )
 
     plt.show()
     print(interpolated_path[4])
