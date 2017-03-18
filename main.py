@@ -11,6 +11,7 @@ NB_FRAMES = 200
 NAME_PLACE = 'saintgall'
 N_SIGHTS = 4
 
+
 # from sights import get_sights
 
 def worker():
