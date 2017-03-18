@@ -1,6 +1,7 @@
 from path import *
 from screenshot import *
 from video import *
+from selenium import webdriver
 #from sights import get_sights
 
 if __name__ == '__main__':
@@ -30,10 +31,12 @@ if __name__ == '__main__':
 
 	print("+++++++ Interpolated path +++++++")
 
+	driver = webdriver.Chrome('/Users/valentin/Documents/Hackathons/StartHack/chromedriver')
 	for i in range(len(interpolated_path[0])):
 		print("Creating image %d/%d..." % (i+1, len(interpolated_path[0])))
-		screenshot_url("https://www.google.ch/maps/" + point_to_string(path_at(interpolated_path, i)) + "t/data=!3m1!1e3", i+1)
+		screenshot_url(driver, "https://www.google.ch/maps/" + point_to_string(path_at(interpolated_path, i)) + "t/data=!3m1!1e3", i+1)
 
+	driver.quit()
 	images_to_video('out/', '.png', 'path.mp4')
 
 #	print([int(x) for x in interpolated_path[4]])

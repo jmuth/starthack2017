@@ -1,5 +1,4 @@
 from subprocess import Popen, PIPE
-from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -16,8 +15,7 @@ def execute_command(command):
         raise Exception(result)
 
 
-def do_screen_capturing(url, screen_path, width, height):
-    driver = webdriver.Chrome("/Users/valentin/Documents/Hackathons/StartHack/chromedriver")
+def do_screen_capturing(driver, url, screen_path, width, height):
 
     # it save service log file in same directory
     # if you want to have log file stored else where
@@ -39,12 +37,13 @@ def do_screen_capturing(url, screen_path, width, height):
         EC.presence_of_element_located((By.CLASS_NAME, "searchbox-hamburger"))
     )
     
-    menu_button.click()
+    driver.execute_script('arguments[0].click()', menu_button)
 
     # Click disable able
     disable_label_button = WebDriverWait(driver, 10).until(
         EC.presence_of_element_located((By.CLASS_NAME, "widget-settings-sub-button-label"))
     )
+    
     
     #wait.until(lambda driver : driver.find_element_by_xpath("//*[contains(@class,'widget-settings-sub-button-label')]"))
 
@@ -61,7 +60,6 @@ def do_screen_capturing(url, screen_path, width, height):
     time.sleep(1)
 
     driver.save_screenshot(screen_path)
-    driver.quit()
 
 def do_crop(params):
     command = [
@@ -73,6 +71,8 @@ def do_crop(params):
     execute_command(' '.join(command))
 
 def get_screen_shot(**kwargs):
+    driver = kwargs['driver']
+
     url = kwargs['url']
     width = int(kwargs.get('width', 1024)) # screen width to capture
     height = int(kwargs.get('height', 768)) # screen height to capture
@@ -89,7 +89,7 @@ def get_screen_shot(**kwargs):
     screen_path = abspath(path, filename)
     crop_path = screen_path
 
-    do_screen_capturing(url, screen_path, width, height)
+    do_screen_capturing(driver, url, screen_path, width, height)
 
     if crop:
         if not crop_replace:
@@ -103,9 +103,9 @@ def get_screen_shot(**kwargs):
 
     return screen_path, crop_path
 
-def screenshot_url(url, nb):
+def screenshot_url(driver, url, nb):
     screen_path, crop_path = get_screen_shot(
-        url=url, path='out/', filename='sof_%s.png' % str(nb).zfill(5),
+        driver=driver, url=url, path='out/', filename='sof_%s.png' % str(nb).zfill(5),
         crop=True, crop_replace=True,
         crop_width=1600, crop_height=900,
         crop_offset_width=200, crop_offset_height=200
