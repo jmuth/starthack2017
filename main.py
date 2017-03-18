@@ -31,6 +31,7 @@ if __name__ == '__main__':
 	print("+++++++ Interpolated path +++++++")
 
 	for i in range(len(interpolated_path[0])):
+		print("Creating image %d/%d..." % (i+1, len(interpolated_path[0])))
 		screenshot_url("https://www.google.ch/maps/" + point_to_string(path_at(interpolated_path, i)) + "t/data=!3m1!1e3", i+1)
 
 	images_to_video('out/', '.png', 'path.mp4')

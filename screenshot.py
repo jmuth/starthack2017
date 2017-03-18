@@ -1,6 +1,8 @@
 from subprocess import Popen, PIPE
 from selenium import webdriver
-import selenium.webdriver.support.ui as ui
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
 import os, base64, time
 
@@ -15,7 +17,6 @@ def execute_command(command):
 
 
 def do_screen_capturing(url, screen_path, width, height):
-    print("Capturing screen..")
     driver = webdriver.Chrome("/Users/valentin/Documents/Hackathons/StartHack/chromedriver")
 
     # it save service log file in same directory
@@ -29,15 +30,23 @@ def do_screen_capturing(url, screen_path, width, height):
 
     driver.get(url)
 
-    wait = ui.WebDriverWait(driver, 10)
+    time.sleep(6)
 
     # disable label
 
-    wait.until(lambda driver : driver.find_element_by_xpath("//*[contains(@class,'searchbox-hamburger')]"))
+    # Click menu button
+    menu_button = WebDriverWait(driver, 10).until(
+        EC.presence_of_element_located((By.CLASS_NAME, "searchbox-hamburger"))
+    )
+    
+    menu_button.click()
 
-    driver.find_element_by_class_name('searchbox-hamburger').click()
-
-    wait.until(lambda driver : driver.find_element_by_xpath("//*[contains(@class,'widget-settings-sub-button-label')]"))
+    # Click disable able
+    disable_label_button = WebDriverWait(driver, 10).until(
+        EC.presence_of_element_located((By.CLASS_NAME, "widget-settings-sub-button-label"))
+    )
+    
+    #wait.until(lambda driver : driver.find_element_by_xpath("//*[contains(@class,'widget-settings-sub-button-label')]"))
 
     '''
     # Element invisible during a few ms
@@ -46,16 +55,15 @@ def do_screen_capturing(url, screen_path, width, height):
     driver.find_element_by_class_name('widget-settings-sub-button-label').click()
     '''
 
-    disable_label_button = driver.find_element_by_class_name('widget-settings-sub-button-label')
+    #disable_label_button = driver.find_element_by_class_name('widget-settings-sub-button-label')
     driver.execute_script('arguments[0].click()', disable_label_button)
 
-    time.sleep(6)
+    time.sleep(1)
 
     driver.save_screenshot(screen_path)
     driver.quit()
 
 def do_crop(params):
-    print("Croping captured image..")
     command = [
         'convert',
         params['screen_path'],
