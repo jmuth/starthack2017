@@ -28,7 +28,8 @@ if __name__ == '__main__':
 
     print("+++++++ Interpolated path +++++++")
 
-    driver = webdriver.Chrome('/Users/valentin/Documents/Hackathons/StartHack/chromedriver')
+    # driver = webdriver.Chrome('/Users/valentin/Documents/Hackathons/StartHack/chromedriver')
+    driver = webdriver.Chrome()
 
     missed = []
     for i in range(len(interpolated_path[0])):
@@ -37,7 +38,7 @@ if __name__ == '__main__':
         n = i + 1
         try:
             screenshot_url(driver, url, n)
-        except ValueError as err:
+        except Exception as err:
             miss_screenshot = [url, n]
             print("[ERROR] shot", n, "missed:", url)
             missed.append(miss_screenshot)
@@ -47,7 +48,7 @@ if __name__ == '__main__':
         try:
             shot_to_try = missed.pop(-1)
             screenshot_url(shot_to_try[0], shot_to_try[1])
-        except ValueError as err:
+        except Exception as err:
             print("[ERROR] shot", n, "missed again:", url)
             missed.append(miss_screenshot)
 
