@@ -1,6 +1,8 @@
 from path import *
+from sights import getSights
 
 if __name__ == '__main__':
+    getSights('Longon')
 
 	N = 10.0
 	#for i in range (int(N)):

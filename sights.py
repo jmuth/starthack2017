@@ -1,6 +1,8 @@
 import time
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
+import googlemaps
+from datetime import datetime
 
 
 def getSights(name='Fribourg'):
@@ -35,4 +37,7 @@ def getSights(name='Fribourg'):
     print("Success")
     return markers
 
-    # driver.close()
+def getElevation():
+    gmaps = googlemaps.Client(key='INSERT_KEY_HERE')
+    elevation = gmaps.elevation((39.7391536, -104.9847034))
+    print(elevation)
