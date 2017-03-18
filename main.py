@@ -1,8 +1,10 @@
 from path import *
 from screenshot import *
 from video import *
+from sights import get_sights
 
 if __name__ == '__main__':
+    get_sights('London')
 
 	N = 10.0
 	#for i in range (int(N)):
