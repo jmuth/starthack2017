@@ -1,6 +1,10 @@
 from path import *
+from screenshot import *
+from video import *
+from sights import get_sights
 
 if __name__ == '__main__':
+    get_sights('London')
 
 	N = 10.0
 	#for i in range (int(N)):
@@ -26,28 +30,30 @@ if __name__ == '__main__':
 
 	path = plan_trip((p_eiffel, p_triomphe, p_chaillot, p_grand_palais, p_louvre, p_monmartre))
 
-
+	# ensure that h are in monotically decreasing
 	for x in range(1,len(path[4])):
 		if path[4][x] > path[4][x-1]:
 			path[4][x] = path[4][x] - 360.0
 
-	for i in range(len(path[0])):
-		print("https://www.google.ch/maps/" + point_to_string(path_at(path, i)) + "t/data=!3m1!1e3")
+	#for i in range(len(path[0])):
+	#	print("https://www.google.ch/maps/" + point_to_string(path_at(path, i)) + "t/data=!3m1!1e3")
 
-	print([int(x) for x in path[4]])
+	#print([int(x) for x in path[4]])
 	interpolated_path = spline_interpolation(path, 35)
 
 	print("+++++++ Interpolated path +++++++")
 
 	for i in range(len(interpolated_path[0])):
-		print("https://www.google.ch/maps/" + point_to_string(path_at(interpolated_path, i)) + "t/data=!3m1!1e3")
+		screenshot_url("https://www.google.ch/maps/" + point_to_string(path_at(interpolated_path, i)) + "t/data=!3m1!1e3", i+1)
 
+	images_to_video('out/', '.png', 'path.mp4')
 
-	print([int(x) for x in interpolated_path[4]])
+#	print([int(x) for x in interpolated_path[4]])
 
-	#import matplotlib.pyplot as plt
-	#ax = plt.axes()
-	#ax.plot(path[0], path[1], 'o', interpolated_path[0], interpolated_path[1], '-')
+	'''
+	import matplotlib.pyplot as plt
+	ax = plt.axes()
+	ax.plot(path[0], path[1], 'o', interpolated_path[0], interpolated_path[1], '-')
 
 	#d_x = [sin(h * 2.0 * pi / 360 + pi / 4.0) * 0.003 for h in path[4]]
 	#d_y = [cos(h * 2.0 * pi / 360 + pi / 4.0) * 0.003 for h in path[4]]
@@ -59,4 +65,9 @@ if __name__ == '__main__':
 
 	#ax.axis([48.84, 48.9, 2.28, 2.32])
 	#ax.arrow( 1.5, 0.8, 0.2, -0.2, fc="k", ec="k", head_width=0.05, head_length=0.1 )
-	#plt.show()
+
+	plt.show()
+	print(interpolated_path[4])
+	'''
+# Point {x, y, z}
+# CameraPoint {p, t, h}
