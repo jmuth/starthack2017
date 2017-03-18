@@ -9,30 +9,56 @@ def get_sights(name='Fribourg'):
     # enter website
     driver.get("http://www.sightsmap.com/")
     # search the site
+    time.sleep(2)
     elem = driver.find_element_by_id("searchfield")
     elem.send_keys(name)
     elem.send_keys(Keys.RETURN)
-    time.sleep(2)
+    time.sleep(3)
 
-    #  get the displayed markers
-    num = (driver.execute_script("return mapMarkersArray.length"))
+    # # Wait for the element
+    # num = WebDriverWait(driver, 10).until(
+    #     EC.presence_of_element_located((By.CLASS_NAME, "searchbox-hamburger"))
+    # )
+
+    success = False
+    max_try = 5
+    i = 0
+    while not success:
+        try:
+            #  get the displayed markers
+            ++i
+            num = (driver.execute_script("return mapMarkersArray.length"))
+            success = True
+        except Exception as err:
+            if i <= max_try:
+                print("[ERROR] sightmaps timed out, try again (iteration:,", i, ")")
+                time.sleep(3)
+            else:
+                quit()
+
+
     markers = []
     for i in range(num):
         request = "return mapMarkersArray[" + str(i) + "]"
         title = request + ".marker.title"
         lat = request + ".poi.lat"
         lng = request + ".poi.lng"
+        rank = request + ".poi.tcrank"
 
-        marker = [driver.execute_script(title),
-                  driver.execute_script(lat),
-                  driver.execute_script(lng)
+        marker = [driver.execute_script(lat),       # latitude
+                  driver.execute_script(lng),       # longitude
+                  60,                               # camera height (fixed for this moment)
+                  driver.execute_script(title),     # name
+                  driver.execute_script(rank)       # local rank
                   ]
 
         markers.append(marker)
 
+    sorted(markers, key=lambda markers: markers[4])
+
     # quit browser
     driver.quit()
-    print("Success")
+    print("[INFO] Success. Get sights: ", markers)
     return markers
 
 def get_elevation():

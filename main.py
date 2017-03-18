@@ -4,6 +4,7 @@ from video import *
 from selenium import webdriver
 import threading
 from queue import Queue
+from sights import get_sights
 
 NB_THREADS = 4
 
@@ -28,7 +29,12 @@ def worker():
 
 
 if __name__ == '__main__':
-    # get_sights('London')
+    name_place = 'London'
+    sights = get_sights(name_place)[:3]
+
+    # looping back to the first sight
+    sights.append(sights[0])
+
 
     p_eiffel = (48.8584, 2.2945, 60)
     p_triomphe = (48.8738, 2.2950, 60)
@@ -39,14 +45,14 @@ if __name__ == '__main__':
 
     path = [[], [], [], [], [], []]
 
-    path = plan_trip((p_eiffel, p_triomphe, p_chaillot, p_grand_palais, p_louvre, p_monmartre, p_eiffel), 900)
+    path = plan_trip(sights, 900)
 
     # ensure that h are in monotically decreasing
     for x in range(1, len(path[4])):
         if path[4][x] > path[4][x - 1]:
             path[4][x] = path[4][x] - 360.0
 
-    interpolated_path = spline_interpolation(path, 600)
+    interpolated_path = spline_interpolation(path, 150)
 
     q = Queue()
     for i in range(len(interpolated_path[0])):
@@ -86,7 +92,7 @@ if __name__ == '__main__':
 
     driver.quit()
     '''
-    images_to_video('out/sof_%', '.png', 'videos/path.mp4')
+    images_to_video('out/sof_\%5d', '.png', 'videos/' + name_place + '.mp4')
 
     '''
     import matplotlib.pyplot as plt
