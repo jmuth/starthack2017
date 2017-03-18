@@ -60,7 +60,7 @@ def do_screen_capturing(driver, url, screen_path, width, height):
     #disable_label_button = driver.find_element_by_class_name('widget-settings-sub-button-label')
     driver.execute_script('arguments[0].click()', disable_label_button)
 
-    time.sleep(1)
+    time.sleep(1.5)
 
     driver.save_screenshot(screen_path)
 
