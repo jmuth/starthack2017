@@ -4,6 +4,7 @@ from video import *
 from selenium import webdriver
 import threading, timeit
 from queue import Queue
+from sights import get_sights
 
 NB_THREADS = 4
 NB_FRAMES = 150
@@ -28,10 +29,13 @@ def worker():
             q.put(item)
 
 if __name__ == '__main__':
+    name_place = 'London'
+    sights = get_sights(name_place)[:3]
+
+    # looping back to the first sight
+    sights.append(sights[0])
 
     start = timeit.default_timer()
-
-    # get_sights('London')
 
     '''
     p_eiffel = (48.8584, 2.2945, 60)
@@ -43,19 +47,19 @@ if __name__ == '__main__':
 
     path = [[], [], [], [], [], []]
 
-    path = plan_trip((p_eiffel, p_triomphe, p_chaillot, p_grand_palais, p_louvre, p_monmartre, p_eiffel), 900)
+    path = plan_trip(sights, 900)
 
     '''
 
-	# fribourg
-    p_poya = (46.8133523,7.1645176, 60)
-    p_cathedral = (46.8062408,7.1629309, 60)
-    p_st_michel = (46.8066934,7.157652, 60)
-    p_perolle = (46.7940545,7.1470015, 60)
+    # # fribourg
+    # p_poya = (46.8133523,7.1645176, 60)
+    # p_cathedral = (46.8062408,7.1629309, 60)
+    # p_st_michel = (46.8066934,7.157652, 60)
+    # p_perolle = (46.7940545,7.1470015, 60)
 
 
     path = [[],[],[],[],[],[]]
-    path = plan_trip((p_perolle, p_poya, p_cathedral, p_st_michel), 500)
+    path = plan_trip(sights, 500)
 
     # ensure that h are in monotically decreasing
     for x in range(1, len(path[4])):
@@ -102,7 +106,7 @@ if __name__ == '__main__':
 
     driver.quit()
     '''
-    images_to_video('out/sof_\%5d', '.png', 'videos/path.mp4')
+    images_to_video('out/sof_\%5d', '.png', 'videos/' + name_place + '.mp4')
 
     stop = timeit.default_timer()
 
