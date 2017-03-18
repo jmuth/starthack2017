@@ -6,6 +6,7 @@ import threading
 from queue import Queue
 
 NB_THREADS = 4
+NB_FRAMES = 150
 
 #from sights import get_sights
 
@@ -26,6 +27,7 @@ def worker():
 if __name__ == '__main__':
     # get_sights('London')
 
+    '''
     p_eiffel = (48.8584, 2.2945, 60)
     p_triomphe = (48.8738, 2.2950, 60)
     p_chaillot = (48.8620159, 2.2878386, 80)
@@ -37,12 +39,23 @@ if __name__ == '__main__':
 
     path = plan_trip((p_eiffel, p_triomphe, p_chaillot, p_grand_palais, p_louvre, p_monmartre))
 
+	'''
+
+	# fribourg
+    p_poya = (46.8133523,7.1645176, 60)
+    p_cathedral = (46.8062408,7.1629309, 60)
+    p_st_michel = (46.8066934,7.157652, 60)
+    p_perolle = (46.7940545,7.1470015, 60)
+
+
+    path = [[],[],[],[],[],[]]
+    path = plan_trip((p_perolle, p_poya, p_cathedral), 500)
     # ensure that h are in monotically decreasing
     for x in range(1, len(path[4])):
         if path[4][x] > path[4][x - 1]:
             path[4][x] = path[4][x] - 360.0
 
-    interpolated_path = spline_interpolation(path, 150)
+    interpolated_path = spline_interpolation(path, NB_FRAMES)
 
     for i in range(NB_THREADS):
     	t = threading.Thread(target=worker)
