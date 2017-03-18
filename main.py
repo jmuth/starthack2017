@@ -29,7 +29,7 @@ def worker():
 
 if __name__ == '__main__':
 
-	start = timeit.default_timer()
+    start = timeit.default_timer()
 
     # get_sights('London')
 
@@ -45,7 +45,7 @@ if __name__ == '__main__':
 
     path = plan_trip((p_eiffel, p_triomphe, p_chaillot, p_grand_palais, p_louvre, p_monmartre, p_eiffel), 900)
 
-	'''
+    '''
 
 	# fribourg
     p_poya = (46.8133523,7.1645176, 60)
@@ -56,12 +56,14 @@ if __name__ == '__main__':
 
     path = [[],[],[],[],[],[]]
     path = plan_trip((p_perolle, p_poya, p_cathedral, p_st_michel), 500)
+
     # ensure that h are in monotically decreasing
     for x in range(1, len(path[4])):
-        if path[4][x] > path[4][x - 1]:
+        while path[4][x] > path[4][x - 1]:
             path[4][x] = path[4][x] - 360.0
 
     interpolated_path = spline_interpolation(path, NB_FRAMES)
+    print(interpolated_path[4])
 
     q = Queue()
     for i in range(len(interpolated_path[0])):
@@ -105,7 +107,7 @@ if __name__ == '__main__':
 
     stop = timeit.default_timer()
 
-    print("Time taken: %d" % (stop - start))
+    print("Time taken: %d seconds" % (stop - start))
 
     '''
     import matplotlib.pyplot as plt
