@@ -6,13 +6,13 @@ import threading
 from queue import Queue
 
 NB_THREADS = 4
-NB_FRAMES = 150
+NB_FRAMES = 80
 
 #from sights import get_sights
 
 def worker():
 	driver = webdriver.Chrome('/Users/valentin/Documents/Hackathons/StartHack/chromedriver')
-	while True:
+	while not q.empty():
 		item = q.get()
 		url = item[0]
 		image_nb = item[1]
@@ -49,7 +49,7 @@ if __name__ == '__main__':
 
 
     path = [[],[],[],[],[],[]]
-    path = plan_trip((p_perolle, p_poya, p_cathedral), 500)
+    path = plan_trip((p_perolle, p_poya), 500)
     # ensure that h are in monotically decreasing
     for x in range(1, len(path[4])):
         if path[4][x] > path[4][x - 1]:
@@ -57,15 +57,16 @@ if __name__ == '__main__':
 
     interpolated_path = spline_interpolation(path, NB_FRAMES)
 
+    q = Queue()
+    for i in range(len(interpolated_path[0])):
+    	url = "https://www.google.ch/maps/" + point_to_string(path_at(interpolated_path, i)) + "t/data=!3m1!1e3"
+    	q.put((url, i+1))
+
     for i in range(NB_THREADS):
     	t = threading.Thread(target=worker)
     	t.daemon = True
     	t.start()
 
-    q = Queue()
-    for i in range(len(interpolated_path[0])):
-    	url = "https://www.google.ch/maps/" + point_to_string(path_at(interpolated_path, i)) + "t/data=!3m1!1e3"
-    	q.put((url, i+1))
     q.join()
 
     '''

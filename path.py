@@ -177,7 +177,7 @@ def plan_trip(list_places, radius = 800, time_per_destination = 2.0):
 
     time_in = time
     time_out = time + time_per_destination
-    add_rotation(path, list_places[-1], 1000, 40, 5, time_in, time_out, current_h, 180 )
+    add_rotation(path, list_places[-1], radius, 40, 5, time_in, time_out, current_h, 180 )
 
     # add a point in between the current destination and the next at higher altitude
     # do this only if we travel a certain distance
