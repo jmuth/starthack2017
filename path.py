@@ -15,6 +15,7 @@ def meter_to_coordinate(m_x, m_y, lat):
     coord_y = m_y / (6378137.0 * cos(lat / 360.0 * 2 * pi))
     return (coord_x, coord_y)
 
+
 # Return string for google maps address
 # Takes x and y coordinates, rayon of the rotation, tilt and revolution (between 0 and 1)
 def compute_camera_values(origin_x, origin_y, rayon_meter, tilt, rev):
@@ -126,7 +127,72 @@ def spline_interpolation(path, nb_frame):
 # Get a list of destination (in the right order)
 # Will do a half-rotation around each destination
 # Need to first compute entry degree
+def plan_trip(list_places, radius = 800, tilt = 55, time_per_destination = 2.0):
 
+    path = [[],[],[],[],[],[]]
+
+    # Compute direction between two destination.
+    # We want to end with it as the last direction for the rotation
+
+    # And start the next rotation with this direction
+    time = 0.0
+    current_h = 0
+    next_h = 0
+    for x in range(len(list_places)-1):
+        time_in = time
+        time_out = time + time_per_destination
+
+        # next_dir is the target dir for the end of this rotation
+        dx = list_places[x+1][0] - list_places[x][0]
+        dy = list_places[x+1][1] - list_places[x][1]
+
+        distance = sqrt(dx * dx + dy * dy)
+
+        h = (acos(dx / distance) / (2.0 * pi) * 360) % 360
+
+        # threshold so spline interpolate rotation during traveling as well
+        #h = h - 15
+
+        if x == 0:
+            current_h = ( h + 180 ) % 360
+
+        add_rotation(path, list_places[x], radius, tilt, 5, time_in, time_out, current_h, (h - current_h) % 360 )
+
+        time_travel = distance / 0.02 * time_per_destination
+
+        current_h = h
+        time = time + time_per_destination + time_travel
+
+
+    time_in = time
+    time_out = time + time_per_destination
+    add_rotation(path, list_places[-1], radius, tilt, 5, time_in, time_out, current_h, 180 )
+
+    # add points in between destinations at higher altitude
+
+    spline_h = CubicSpline(path[5], path[4])
+    for x in range(1, len(list_places)):
+        distance = sqrt(dx * dx + dy * dy)
+        time_travel = distance / 0.02 * time_per_destination
+
+        idx = x * 5 + (x - 1)
+
+        distance_m = coordinate_distance(path[0][idx-1], path[1][idx-1], path[0][idx], path[1][idx])
+        path[0].insert(idx, (path[0][idx - 1] + path[0][idx]) / 2.0)
+        path[1].insert(idx, (path[1][idx - 1] + path[1][idx]) / 2.0)
+        path[2].insert(idx, (path[2][idx - 1] + path[2][idx] + distance_m * 0.5) / 2.0)
+        path[3].insert(idx, 40.0)
+        time_inter = (path[5][idx - 1] + path[5][idx]) / 2.0
+        path[4].insert(idx, spline_h(time_inter))        
+        path[5].insert(idx, time_inter)
+
+    #print(path[2])
+    #print(path[5])
+
+    return path
+
+
+'''
 def plan_trip(list_places, radius = 800, time_per_destination = 2.0):
 
     path = [[],[],[],[],[],[]]
@@ -192,3 +258,4 @@ def plan_trip(list_places, radius = 800, time_per_destination = 2.0):
     path[4].insert(len(path[4]) - 5, path[4][-6])        
     path[5].insert(len(path[5]) - 5, (path[5][-6] + path[5][-5]) / 2.0)
     return path
+'''
