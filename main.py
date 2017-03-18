@@ -7,21 +7,25 @@ from queue import Queue
 
 NB_THREADS = 4
 
-#from sights import get_sights
+
+# from sights import get_sights
 
 def worker():
-	driver = webdriver.Chrome('/Users/valentin/Documents/Hackathons/StartHack/chromedriver')
-	while True:
-		item = q.get()
-		url = item[0]
-		image_nb = item[1]
-		if screenshot_url(driver, url, image_nb) == 0:
-			print(threading.current_thread().name + " computed image " + str(image_nb))
-			q.task_done()
-		else:
-			print(threading.current_thread().name + " failed to compute image " + str(image_nb) + " !!!!!!!!!")
-			q.task_done()
-			q.put(item)
+    # driver = webdriver.Chrome('/Users/valentin/Documents/Hackathons/StartHack/chromedriver')
+    driver = webdriver.Chrome()
+
+    while not q.empty():
+        item = q.get()
+        url = item[0]
+        image_nb = item[1]
+        if screenshot_url(driver, url, image_nb) == 0:
+            print(threading.current_thread().name + " computed image " + str(image_nb))
+            q.task_done()
+        else:
+            print(threading.current_thread().name + " failed to compute image " + str(image_nb) + " !!!!!!!!!")
+            q.task_done()
+            q.put(item)
+
 
 if __name__ == '__main__':
     # get_sights('London')
@@ -35,24 +39,25 @@ if __name__ == '__main__':
 
     path = [[], [], [], [], [], []]
 
-    path = plan_trip((p_eiffel, p_triomphe, p_chaillot, p_grand_palais, p_louvre, p_monmartre))
+    path = plan_trip((p_eiffel, p_triomphe, p_chaillot, p_grand_palais, p_louvre, p_monmartre, p_eiffel), 900)
 
     # ensure that h are in monotically decreasing
     for x in range(1, len(path[4])):
         if path[4][x] > path[4][x - 1]:
             path[4][x] = path[4][x] - 360.0
 
-    interpolated_path = spline_interpolation(path, 150)
-
-    for i in range(NB_THREADS):
-    	t = threading.Thread(target=worker)
-    	t.daemon = True
-    	t.start()
+    interpolated_path = spline_interpolation(path, 600)
 
     q = Queue()
     for i in range(len(interpolated_path[0])):
-    	url = "https://www.google.ch/maps/" + point_to_string(path_at(interpolated_path, i)) + "t/data=!3m1!1e3"
-    	q.put((url, i+1))
+        url = "https://www.google.ch/maps/" + point_to_string(path_at(interpolated_path, i)) + "t/data=!3m1!1e3"
+        q.put((url, i + 1))
+
+    for i in range(NB_THREADS):
+        t = threading.Thread(target=worker)
+        t.daemon = True
+        t.start()
+
     q.join()
 
     '''
@@ -81,7 +86,7 @@ if __name__ == '__main__':
 
     driver.quit()
     '''
-    images_to_video('out/', '.png', 'path.mp4')
+    images_to_video('out/sof_%', '.png', 'videos/path.mp4')
 
     '''
     import matplotlib.pyplot as plt
