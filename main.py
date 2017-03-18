@@ -35,7 +35,9 @@ if __name__ == '__main__':
 
     path = [[], [], [], [], [], []]
 
-    path = plan_trip((p_eiffel, p_triomphe, p_chaillot, p_grand_palais, p_louvre, p_monmartre))
+    #path = plan_trip((p_eiffel, p_triomphe, p_chaillot, p_grand_palais, p_louvre, p_monmartre), 900)
+
+    path = plan_trip((p_eiffel, p_triomphe, p_chaillot, p_grand_palais, p_louvre, p_monmartre, p_eiffel), 900)
 
     # ensure that h are in monotically decreasing
     for x in range(1, len(path[4])):
