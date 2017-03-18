@@ -1,0 +1,24 @@
+{
+  "name": "acensi",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "dependencies": {
+    "hapi": "^16.0.1",
+    "joi": "^10.0.2",
+    "typescript": "^2.0.10"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node js_files/server.js"
+  },
+  "keywords": [
+    "acensi",
+    "2016",
+    "valentin",
+    "moullet"
+  ],
+  "author": "Valentin Moullet",
+  "license": "ISC"
+}

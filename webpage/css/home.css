@@ -1,0 +1,8 @@
+#map { 
+    height: 1500px;
+    width: 1500px;
+}
+
+.leaflet-overlay-pane {
+    opacity: 0.4;
+}

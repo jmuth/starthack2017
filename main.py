@@ -2,7 +2,7 @@ from path import *
 from screenshot import *
 from video import *
 from selenium import webdriver
-import threading, timeit
+import threading, timeit, sys
 from queue import Queue
 from sights import get_sights
 
@@ -30,7 +30,9 @@ def worker():
             q.put(item)
 
 if __name__ == '__main__':
-    name_place = 'London'
+    #name_place = 'London'
+    name_place = sys.argv[1]
+    print(name_place)
     sights = get_sights(name_place)[:MAX_NB_SIGHTS]
 
     # looping back to the first sight
