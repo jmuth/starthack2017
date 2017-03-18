@@ -2,8 +2,26 @@ from path import *
 from screenshot import *
 from video import *
 from selenium import webdriver
+import threading
+from queue import Queue
+
+NB_THREADS = 4
 
 #from sights import get_sights
+
+def worker():
+	driver = webdriver.Chrome('/Users/valentin/Documents/Hackathons/StartHack/chromedriver')
+	while True:
+		item = q.get()
+		url = item[0]
+		image_nb = item[1]
+		if screenshot_url(driver, url, image_nb) == 0:
+			print(threading.current_thread().name + " computed image " + str(image_nb))
+			q.task_done()
+		else:
+			print(threading.current_thread().name + " failed to compute image " + str(image_nb) + " !!!!!!!!!")
+			q.task_done()
+			q.put(item)
 
 if __name__ == '__main__':
     # get_sights('London')
@@ -26,9 +44,18 @@ if __name__ == '__main__':
 
     interpolated_path = spline_interpolation(path, 150)
 
-    print("+++++++ Interpolated path +++++++")
+    for i in range(NB_THREADS):
+    	t = threading.Thread(target=worker)
+    	t.daemon = True
+    	t.start()
 
-    # driver = webdriver.Chrome('/Users/valentin/Documents/Hackathons/StartHack/chromedriver')
+    q = Queue()
+    for i in range(len(interpolated_path[0])):
+    	url = "https://www.google.ch/maps/" + point_to_string(path_at(interpolated_path, i)) + "t/data=!3m1!1e3"
+    	q.put((url, i+1))
+    q.join()
+
+    '''
     driver = webdriver.Chrome()
 
     missed = []
@@ -53,6 +80,7 @@ if __name__ == '__main__':
             missed.append(miss_screenshot)
 
     driver.quit()
+    '''
     images_to_video('out/', '.png', 'path.mp4')
 
     '''

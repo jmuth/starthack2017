@@ -108,9 +108,13 @@ def get_screen_shot(**kwargs):
     return screen_path, crop_path
 
 def screenshot_url(driver, url, nb):
-    screen_path, crop_path = get_screen_shot(
-        driver=driver, url=url, path='out/', filename='sof_%s.png' % str(nb).zfill(5),
-        crop=True, crop_replace=True,
-        crop_width=1600, crop_height=900,
-        crop_offset_width=200, crop_offset_height=200
-    )
+    try:
+        get_screen_shot(
+            driver=driver, url=url, path='out/', filename='sof_%s.png' % str(nb).zfill(5),
+            crop=True, crop_replace=True,
+            crop_width=1600, crop_height=900,
+            crop_offset_width=200, crop_offset_height=200
+        )
+        return 0
+    except Exception as err:
+        return -1
