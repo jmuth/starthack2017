@@ -22,11 +22,18 @@ def do_screen_capturing(url, screen_path, width, height):
     # initialize the webdriver.PhantomJS() as
     # driver = webdriver.PhantomJS(service_log_path='/var/log/phantomjs/ghostdriver.log')
     driver.set_script_timeout(30)
+
     if width and height:
         driver.set_window_size(width, height)
 
     driver.get(url)
-    time.sleep(8)
+    time.sleep(6)
+
+    # disable label
+    driver.find_element_by_class_name('searchbox-hamburger').click()
+    time.sleep(0.5)
+    driver.find_element_by_class_name('widget-settings-sub-button-label').click()
+    time.sleep(1.)
 
     driver.save_screenshot(screen_path)
     driver.quit()
