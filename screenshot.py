@@ -32,15 +32,13 @@ def do_screen_capturing(driver, url, screen_path, width, height):
     time.sleep(6)
 
     # disable label
-    # Click menu button
-    menu_button = WebDriverWait(driver, TIME_OUT).until(
-        EC.presence_of_element_located((By.CLASS_NAME, "searchbox-hamburger"))
-    )
 
     # Click menu button
     menu_button = WebDriverWait(driver, TIME_OUT).until(
         EC.presence_of_element_located((By.CLASS_NAME, "searchbox-hamburger"))
     )
+
+    time.sleep(5)
     
     driver.execute_script('arguments[0].click()', menu_button)
 
@@ -58,11 +56,12 @@ def do_screen_capturing(driver, url, screen_path, width, height):
 
     driver.find_element_by_class_name('widget-settings-sub-button-label').click()
     '''
+    time.sleep(1)
 
     #disable_label_button = driver.find_element_by_class_name('widget-settings-sub-button-label')
     driver.execute_script('arguments[0].click()', disable_label_button)
 
-    time.sleep(1.5)
+    time.sleep(3)
 
     driver.save_screenshot(screen_path)
 

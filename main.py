@@ -7,8 +7,8 @@ from queue import Queue
 from sights import get_sights
 
 NB_THREADS = 4
-NB_FRAMES = 600
-# NAME_PLACE = 'saintgall'
+NB_FRAMES = 1800
+NAME_PLACE = 'Manhattan'
 N_SIGHTS = 4
 
 
@@ -31,7 +31,6 @@ def worker():
             q.put(item)
 
 if __name__ == '__main__':
-    NAME_PLACE = 'St-Gall'
     #name_place = sys.argv[1]
     sights = get_sights(NAME_PLACE)[:N_SIGHTS]
 
@@ -58,7 +57,7 @@ if __name__ == '__main__':
     fribourg = [p_poya, p_cathedral]
 
     path = [[],[],[],[],[],[]]
-    path = plan_trip(sights, 500, 60)
+    path = plan_trip(sights, 1200)
 
     '''
     # ensure that h are in monotically decreasing
