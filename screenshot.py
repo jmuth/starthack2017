@@ -29,7 +29,7 @@ def do_screen_capturing(driver, url, screen_path, width, height):
 
     driver.get(url)
 
-    time.sleep(6)
+    time.sleep(7)
 
     # disable label
 
@@ -46,9 +46,8 @@ def do_screen_capturing(driver, url, screen_path, width, height):
     disable_label_button = WebDriverWait(driver, TIME_OUT).until(
         EC.presence_of_element_located((By.CLASS_NAME, "widget-settings-sub-button-label"))
     )
-    
 
-    #wait.until(lambda driver : driver.find_element_by_xpath("//*[contains(@class,'widget-settings-sub-button-label')]"))
+    time.sleep(1)
 
     '''
     # Element invisible during a few ms
@@ -61,7 +60,7 @@ def do_screen_capturing(driver, url, screen_path, width, height):
     #disable_label_button = driver.find_element_by_class_name('widget-settings-sub-button-label')
     driver.execute_script('arguments[0].click()', disable_label_button)
 
-    time.sleep(3)
+    time.sleep(4)
 
     driver.save_screenshot(screen_path)
 

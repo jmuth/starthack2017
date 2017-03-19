@@ -5,6 +5,7 @@ from selenium import webdriver
 import threading, timeit, sys
 from queue import Queue
 from sights import get_sights
+from except_file import except_already_existing
 
 NB_THREADS = 4
 NB_FRAMES = 1800
@@ -31,7 +32,9 @@ def worker():
             q.put(item)
 
 if __name__ == '__main__':
-    #name_place = sys.argv[1]
+    except_array =except_already_existing()
+    # except_array = []
+
     sights = get_sights(NAME_PLACE)[:N_SIGHTS]
 
     # looping back to the first sight
@@ -70,8 +73,9 @@ if __name__ == '__main__':
 
     q = Queue()
     for i in range(len(interpolated_path[0])):
-        url = "https://www.google.ch/maps/" + point_to_string(path_at(interpolated_path, i)) + "t/data=!3m1!1e3"
-        q.put((url, i + 1))
+        if (i+1) not in except_array:
+            url = "https://www.google.ch/maps/" + point_to_string(path_at(interpolated_path, i)) + "t/data=!3m1!1e3"
+            q.put((url, i + 1))
 
     for i in range(NB_THREADS):
         t = threading.Thread(target=worker)
