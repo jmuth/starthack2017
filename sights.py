@@ -5,7 +5,8 @@ import googlemaps
 
 def get_sights(name='Fribourg'):
     print("Getting sights of:", name)
-    driver = webdriver.Chrome()
+    #driver = webdriver.Chrome()
+    driver = webdriver.Chrome('/Users/valentin/Documents/Hackathons/StartHack/chromedriver')
     # enter website
     driver.get("http://www.sightsmap.com/")
     # search the site
@@ -51,7 +52,7 @@ def get_sights(name='Fribourg'):
 
         marker = [driver.execute_script(lat),       # latitude
                   driver.execute_script(lng),       # longitude
-                  60,                               # camera height (fixed for this moment)
+                  120,                               # camera height (fixed for this moment)
                   driver.execute_script(title),     # name
                   driver.execute_script(rank)       # local rank
                   ]

@@ -170,13 +170,14 @@ def plan_trip(list_places, radius = 800, tilt = 55, time_per_destination = 2.0):
         '''
         h = atan2(-dy, dx) / (2.0 * pi) * 360.0 + 90
 
-        #print("dx: " + str(dx / distance) + " dy: " + str(dy / distance) + " h: " + str(h))
+        # print("dx: " + str(dx / distance) + " dy: " + str(dy / distance) + " h: " + str(h))
         
         # threshold so spline interpolate rotation during traveling as well
         #h = h - 15
 
-        end_h = (h + sens * 90) % 360;
-        #print("end_h: " + str(end_h))
+        end_h = (h + sens * 90) % 360
+
+        # print("end_h: " + str(end_h))
 
         if x == 0:
             current_h = ( end_h + 180 )
@@ -189,7 +190,8 @@ def plan_trip(list_places, radius = 800, tilt = 55, time_per_destination = 2.0):
         time_travel = distance / 0.02 * time_per_destination
 
         current_h = (end_h + 180) % 360;
-        #print(current_h)
+
+        # print(current_h)
         #current_h = (current_h + sens * (end_h - current_h)) % 360
 
         sens = sens * (-1)
