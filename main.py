@@ -5,10 +5,11 @@ from selenium import webdriver
 import threading, timeit
 from queue import Queue
 from sights import get_sights
+from except_file import except_already_existing
 
-NB_THREADS = 4
-NB_FRAMES = 600
-# NAME_PLACE = 'saintgall'
+NB_THREADS = 8
+NB_FRAMES = 1600
+NAME_PLACE = 'tokyo'
 N_SIGHTS = 4
 
 
@@ -31,7 +32,10 @@ def worker():
             q.put(item)
 
 if __name__ == '__main__':
-    # sights = get_sights(NAME_PLACE)[:N_SIGHTS]
+    except_array =except_already_existing()
+    # except_array = []
+
+    sights = get_sights(NAME_PLACE)[:N_SIGHTS]
 
     # looping back to the first sight
     # sights.append(sights[0])
@@ -55,19 +59,20 @@ if __name__ == '__main__':
 
 
     path = [[],[],[],[],[],[]]
-    path = plan_trip(paris, 900, 45)
+    path = plan_trip(sights, 900, 65)
 
     # ensure that h are in monotically decreasing
-    for x in range(1, len(path[4])):
-        while path[4][x] > path[4][x - 1]:
-            path[4][x] = path[4][x] - 360.0
+    # for x in range(1, len(path[4])):
+    #     while path[4][x] > path[4][x - 1]:
+    #         path[4][x] = path[4][x] - 360.0
 
     interpolated_path = spline_interpolation(path, NB_FRAMES)
 
     q = Queue()
     for i in range(len(interpolated_path[0])):
-        url = "https://www.google.ch/maps/" + point_to_string(path_at(interpolated_path, i)) + "t/data=!3m1!1e3"
-        q.put((url, i + 1))
+        if (i+1) not in except_array:
+            url = "https://www.google.ch/maps/" + point_to_string(path_at(interpolated_path, i)) + "t/data=!3m1!1e3"
+            q.put((url, i + 1))
 
     for i in range(NB_THREADS):
         t = threading.Thread(target=worker)
